@@ -39,7 +39,14 @@ class PtyProcess(QObject):
         except OSError:
             self._cleanup()
 
+    def _cleanup(self):
+        if self.notifier:
+            self._notifier.setEnabled(False)
+            self._notifier = None
+        code = self._proc.wait() if self._proc else 0
+        self.finished.emit(code)
+
     def terminate(self):
         if self._proc:
             os.killpg(os.getpgid(self._proc.pid), signal.SIGHUP)
-            self.finished.emit(0)
+            self._cleanup()
