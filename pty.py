@@ -30,6 +30,9 @@ class PtyProcess(QObject):
         )
         os.close(slave_fd)
 
+        self._notifier = QSocketNotifier(self._master_fd, QSocketNotifier.Type.Read, self)
+        self._notifier.activated.connect(self._read)
+
     def write(self, data: bytes):
         os.write(self._master_fd, data)
 
