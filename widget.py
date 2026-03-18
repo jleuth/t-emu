@@ -4,9 +4,9 @@ from PySide6.QtGui import QColor, QFont, QFontMetricsF, QPainter
 from PySide6.QtWidgets import QApplication, QWidget  
 
                                                                                                                                                                         
-from .config import Conf                                                                                                                                                 
-from .emulator import TerminalEmulator                                                                                                                                   
-from .pty import PtyProcess                                                                                                                                              
+from config import Conf                                                                                                                                                 
+from emulator import TerminalEmulator                                                                                                                                   
+from pty import PtyProcess                                                                                                                                              
                                                                                                                                                                         
 KEY_MAP = {                                                                                                                                                              
     Qt.Key.Key_Up: b"\x1b[A",                                                                                                                                            
@@ -126,7 +126,7 @@ class TerminalWidget(QWidget):
         self.update()
 
 def main():
-    app = QApplication(sys.argsv)
+    app = QApplication(sys.argv)
     w = TerminalWidget
     w.resize(800, 500)
     w.show()
