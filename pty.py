@@ -1,17 +1,23 @@
 from dataclasses import dataclass
-import os, pty, signal, struct, fcntl, termios, subprocess
+import os, signal, struct, fcntl, termios, subprocess
 from PySide6.QtCore import QObject, QSocketNotifier, Signal
 
 class PtyProcess(QObject):
     output_ready = Signal(bytes) #when shell writes
     finished = Signal(int) #when shell exits
 
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._proc = None
+        self._master_fd = None
+        self._notifier = None
+
     def start(self, shell="", rows=24, cols=80):
         shell = shell or os.environ.get("SHELL", "/bin/bash")
-        self._master_fd, slave_fd = pty.openpty()
+        self._master_fd, slave_fd = os.openpty()
 
         winsize = struct.pack("HHHH", rows, cols, 0, 0)
-        fcntl.ioctl(self.master_fd, termios.TIOCSWINSZ, winsize)
+        fcntl.ioctl(self._master_fd, termios.TIOCSWINSZ, winsize)
 
         env = os.environ.copy()
         env["TERM"] = "xterm-256color" #tell programs what terminal type we are
@@ -40,7 +46,7 @@ class PtyProcess(QObject):
             self._cleanup()
 
     def _cleanup(self):
-        if self.notifier:
+        if self._notifier:
             self._notifier.setEnabled(False)
             self._notifier = None
         code = self._proc.wait() if self._proc else 0

@@ -31,7 +31,7 @@ class TerminalWidget(QWidget):
         self._conf = conf or Conf()
 
         self._font = QFont(self._conf.font_family)
-        self._font.setPixelSize(self.conf.font_size)
+        self._font.setPixelSize(self._conf.font_size)
         self._font.setFixedPitch(True)
 
         fm = QFontMetricsF(self._font)
@@ -65,7 +65,7 @@ class TerminalWidget(QWidget):
             self._cols = cols
             self._rows = rows
             self._emu.resize(rows, cols)
-            if self._pty.is_alive:
+            if self._pty._proc is not None and self._pty._proc.poll() is None:
                 self._pty.resize(rows, cols)
 
     def resizeEvent(self, event):
@@ -77,8 +77,8 @@ class TerminalWidget(QWidget):
         p.setFont(self._font)
         p.fillRect(self.rect(), QColor(16, 16, 20))
 
-        screen = self._emu.screen
-        cur_row, cur_col = self._emu.get_cursor_pos()
+        screen = self._emu._screen
+        cur_row, cur_col = self._emu._screen.cursor.y, self._emu._screen.cursor.x
 
         for row in range(self._rows):
             line = screen.buffer[row]
@@ -127,7 +127,7 @@ class TerminalWidget(QWidget):
 
 def main():
     app = QApplication(sys.argv)
-    w = TerminalWidget
+    w = TerminalWidget()
     w.resize(800, 500)
     w.show()
     w.start()
