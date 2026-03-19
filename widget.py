@@ -23,7 +23,34 @@ KEY_MAP = {
     Qt.Key.Key_End: b"\x1b[F",                                                                                                                                           
     Qt.Key.Key_PageUp: b"\x1b[5~",
     Qt.Key.Key_PageDown: b"\x1b[6~",                                                                                                                                     
-}                                 
+}    
+
+_PYTE_ANSI = [                                                                                                                                                           
+    "#000000", "#cc0000", "#4e9a06", "#c4a000",                                                                                                                          
+    "#3465a4", "#75507b", "#06989a", "#d3d7cf",                                                                                                                          
+    "#555753", "#ef2929", "#8ae234", "#fce94f",                                                                                                                          
+    "#729fcf", "#ad7fa8", "#34e2e2", "#eeeeec",                                                                                                                          
+]
+
+def _pyte_color(value):
+    if value == "default" or value is None:
+        return None
+    if isinstance(value, int):
+        if value < 16:
+            return QColor(_PYTE_ANSI[value])
+        if value < 232:
+            v = value - 16
+            b = v % 6
+            g = (v // 6) % 6
+            r = v // 36
+            return QColor(r * 51, g * 51, b * 51)
+
+        s = (value - 232) * 10 + 8
+        return QColor(s, s, s)
+    if isinstance(value, str):
+        if value.startswith('#') or len(value) > 0:
+            return QColor(value) if QColor(value).isValid() else None
+    return None
 
 class TerminalWidget(QWidget):
     def __init__(self, conf=None, parent=None):
@@ -86,9 +113,14 @@ class TerminalWidget(QWidget):
             for col in range(self._cols):
                 char = line[col]
                 x = int(col * self._cell_w)
-                fg = QColor("#b5f5f1")
                 ch = char.data
+
+                if char.bg != "default":
+                    bg = _pyte_color(char.bg)
+                    if bg:
+                        p.fillRect(x, y, int(self._cell_w), int(self._cell_h), bg)
                 if ch and ch != "":
+                    fg = _pyte_color(char.fg) or QColor("#b5f5f1")
                     p.setPen(fg)
                     p.drawText(x, y + int(self._baseline), ch)
 
@@ -124,6 +156,8 @@ class TerminalWidget(QWidget):
         self._emu.feed(data)
         self._cursor_visible = True
         self.update()
+
+
 
 def main():
     app = QApplication(sys.argv)
