@@ -26,3 +26,5 @@ it's not gonna be perfect for everyone, that's the point.
 so far today i've gotten resizing the terminal working. i mean, it worked before, but interactive apps didn't respond. now they're responsive so things like htop work well
 
 i also got special keys working, so F-keys and key combos will work now.
+
+i got a suggestion from someone on slack to add command completion. i think i'd just base it off ```history``` but not a bad idea. i'm not a big fan of command completion but it's easy enough to toggle on/off

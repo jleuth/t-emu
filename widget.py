@@ -34,8 +34,16 @@ KEY_MAP = {
     Qt.Key.Key_F9:  b"\x1b[20~",                                                                                                                                             
     Qt.Key.Key_F10: b"\x1b[21~",                                                                                                                                             
     Qt.Key.Key_F11: b"\x1b[23~",                                                                                                                                             
-    Qt.Key.Key_F12: b"\x1b[24~",                                                                                                                                   
+    Qt.Key.Key_F12: b"\x1b[24~",      
+                                                                                                                              
 }    
+
+CTRL_ARROW_MAP = {
+    Qt.Key.Key_Up:    b"\x1b[1;5A",
+    Qt.Key.Key_Down:  b"\x1b[1;5B",                                                                                                                                      
+    Qt.Key.Key_Right: b"\x1b[1;5C",                                                                                                                                      
+    Qt.Key.Key_Left:  b"\x1b[1;5D",  
+}
 
 _PYTE_ANSI = [                                                                                                                                                           
     "#000000", "#cc0000", "#4e9a06", "#c4a000",                                                                                                                          
@@ -172,9 +180,19 @@ class TerminalWidget(QWidget):
 
         p.end()
 
+    def event(self, event):
+        if event.type() == event.Type.KeyPress:
+            self.keyPressEvent(event)
+            return True
+        return super().event(event)
+
     def keyPressEvent(self, event):
         key = event.key()
         mods = event.modifiers()
+
+        if mods & Qt.KeyboardModifier.ControlModifier and key in CTRL_ARROW_MAP:
+            self._pty.write(CTRL_ARROW_MAP[key])
+            return
 
         if key in KEY_MAP:
             self._pty.write(KEY_MAP[key])
@@ -184,6 +202,11 @@ class TerminalWidget(QWidget):
             if Qt.Key.Key_A <= key <= Qt.Key.Key_Z:
                 self._pty.write(bytes([key - Qt.Key.Key_A + 1]))
                 return
+
+        if mods & Qt.KeyboardModifier.AltModifier:
+            text = event.text()
+            if text:
+                self._pty.write(b"\x1b" +text.encode("utf-8"))
 
         text = event.text()
         if text:
