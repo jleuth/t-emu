@@ -39,6 +39,8 @@ class PtyProcess(QObject):
     def resize(self, rows, cols):
         winsize = struct.pack("HHHH", rows, cols, 0, 0)
         fcntl.ioctl(self._master_fd, termios.TIOCSWINSZ, winsize)
+        if self._proc:
+            os.killpg(os.getpgid(self._proc.pid), signal.SIGWINCH)
 
     def _read(self):
         try:
