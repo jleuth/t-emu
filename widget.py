@@ -60,6 +60,14 @@ class TerminalWidget(QWidget):
         self._font = QFont(self._conf.font_family)
         self._font.setPixelSize(self._conf.font_size)
         self._font.setFixedPitch(True)
+        self._font_bold = QFont(self._font)
+        self._font_italic = QFont(self._font)
+        self._font_bold_italic = QFont(self._font)
+
+        self._font_bold.setBold(True)
+        self._font_italic.setItalic(True)
+        self._font_bold_italic.setBold(True)
+        self._font_bold_italic.setItalic(True)
 
         fm = QFontMetricsF(self._font)
         self._cell_w = fm.horizontalAdvance("M")
@@ -80,6 +88,7 @@ class TerminalWidget(QWidget):
 
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setMinimumSize(200, 100)
+
 
     def start(self):
         self._recalc_grid()
@@ -115,14 +124,34 @@ class TerminalWidget(QWidget):
                 x = int(col * self._cell_w)
                 ch = char.data
 
-                if char.bg != "default":
-                    bg = _pyte_color(char.bg)
-                    if bg:
-                        p.fillRect(x, y, int(self._cell_w), int(self._cell_h), bg)
+                fg = _pyte_color(char.fg) or QColor('#b6f5f1')
+                bg = _pyte_color(char.bg)
+
+                if char.reverse:
+                    fg = fg or QColor('#b6f5f1')
+                    bg = bg or QColor(16, 16, 20)
+
+                if bg: p.fillRect(x, y, int(self._cell_w), int(self._cell_h), bg)
+
                 if ch and ch != "":
-                    fg = _pyte_color(char.fg) or QColor("#b5f5f1")
+                    if char.bold and char.italics:
+                        p.setFont(self._font_bold_italic)
+                    elif char.bold:
+                        p.setFont(self._font_bold)
+                    elif char.italics:
+                        p.setFont(self._font_italic)
+                    else:
+                        p.setFont(self._font)
                     p.setPen(fg)
                     p.drawText(x, y + int(self._baseline), ch)
+
+                if char.underscore:
+                    p.setPen(fg)
+                    p.drawText(x, y, + int(self._cell_h) - 2, x + int(self._cell_w, y + int(self._cell_h)) -2)
+
+                if char.strikethrough:
+                    p.setPen(fg)
+                    p.drawLine(x, y, + int(self._cell_h // 2), x + int(self._cell_w), y + int(self._cell_h // 2))
 
         if self._cursor_visible:
             cx = int(cur_col * self._cell_w)
