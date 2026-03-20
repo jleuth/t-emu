@@ -28,3 +28,5 @@ so far today i've gotten resizing the terminal working. i mean, it worked before
 i also got special keys working, so F-keys and key combos will work now.
 
 i got a suggestion from someone on slack to add command completion. i think i'd just base it off ```history``` but not a bad idea. i'm not a big fan of command completion but it's easy enough to toggle on/off
+
+i'm currently trying to get ctrl+c, and arrow keys working, but i'm having a hard time. i have work soon and can't work more today on the project, so total time about 1h 15m. we'll figure it out tho :3
