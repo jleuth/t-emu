@@ -22,7 +22,19 @@ KEY_MAP = {
     Qt.Key.Key_Home: b"\x1b[H",                                                                                                                                          
     Qt.Key.Key_End: b"\x1b[F",                                                                                                                                           
     Qt.Key.Key_PageUp: b"\x1b[5~",
-    Qt.Key.Key_PageDown: b"\x1b[6~",                                                                                                                                     
+    Qt.Key.Key_PageDown: b"\x1b[6~",   
+    Qt.Key.Key_F1:  b"\x1bOP",                                                                                                                                               
+    Qt.Key.Key_F2:  b"\x1bOQ",                                                                                                                                               
+    Qt.Key.Key_F3:  b"\x1bOR",                                                                                                                                               
+    Qt.Key.Key_F4:  b"\x1bOS",                                                                                                                                               
+    Qt.Key.Key_F5:  b"\x1b[15~",                                                                                                                                             
+    Qt.Key.Key_F6:  b"\x1b[17~",                                                                                                                                             
+    Qt.Key.Key_F7:  b"\x1b[18~",                                                                                                                                             
+    Qt.Key.Key_F8:  b"\x1b[19~",                                                                                                                                             
+    Qt.Key.Key_F9:  b"\x1b[20~",                                                                                                                                             
+    Qt.Key.Key_F10: b"\x1b[21~",                                                                                                                                             
+    Qt.Key.Key_F11: b"\x1b[23~",                                                                                                                                             
+    Qt.Key.Key_F12: b"\x1b[24~",                                                                                                                                   
 }    
 
 _PYTE_ANSI = [                                                                                                                                                           
