@@ -29,4 +29,34 @@ i also got special keys working, so F-keys and key combos will work now.
 
 i got a suggestion from someone on slack to add command completion. i think i'd just base it off ```history``` but not a bad idea. i'm not a big fan of command completion but it's easy enough to toggle on/off
 
-i'm currently trying to get ctrl+c, and arrow keys working, but i'm having a hard time. i have work soon and can't work more today on the project, so total time about 1h 15m. we'll figure it out tho :3
+i'm currently trying to get ctrl+c, and arrow keys working, but i'm having a hard time. i have work soon and can't work more today on the project, so total time about 1h 15m (hackatime). we'll figure it out tho :3
+
+# 21 Mar: ironing out bugs
+
+i figured out the ctrl+c issue. it's something to do with older programs that run the terminal in raw mode and don't have great support for interrupt (like htop, which uses F10 for quit instead of ctrl+c). it took a bit to figure out why my fixes wouldn't work, but I eventually figured it out. Implemented the fix!
+
+I did notice that there's issues with colors and cells, especially in a color rich program like htop. 
+![Colors in small rectangular cells black have spaces between them](journal_img/colorissue.png)
+i just had some bad math and fixed that one.
+
+ i also noticed in htop that the blinking cursor doesn't stop like it should, and my arrow keys STILL aren't working.
+
+i fixed the cursor thing, but now if i try to launch something like Kilo CLI/OpenCode it... crashes?
+
+says: ```Traceback (most recent call last):
+  File "/home/jake/Desktop/t-emu/widget.py", line 235, in _on_output
+    self._emu.feed(data)
+  File "/home/jake/Desktop/t-emu/emulator.py", line 10, in feed
+    self._stream.feed(text)
+  File "/home/jake/.pyenv/versions/3.11.6/lib/python3.11/site-packages/pyte/streams.py", line 205, in feed
+    taking_plain_text = send(data[offset:offset + 1])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jake/.pyenv/versions/3.11.6/lib/python3.11/site-packages/pyte/streams.py", line 213, in _send_to_parser
+    return self._parser.send(data)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jake/.pyenv/versions/3.11.6/lib/python3.11/site-packages/pyte/streams.py", line 353, in _parser_fsm
+    csi_dispatch[char](*params, private=True)
+TypeError: Screen.report_device_status() got an unexpected keyword argument 'private'
+[1]    3336387 segmentation fault (core dumped)  python3 widget.py```
+
+guess I'll try to do that, because this is interesting. i'm calling this now, but my suspicion is that it has something to do with OpenCode being able to take mouse inputs and my program not handling it yet.
