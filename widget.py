@@ -154,7 +154,7 @@ class TerminalWidget(QWidget):
                 if char.reverse:
                     fg, bg = (bg or QColor(16, 16, 20)), (fg or QColor('#ffffff'))
 
-                if bg: p.fillRect(x, y, int(self._cell_w), int(self._cell_h), bg)
+                if bg: p.fillRect(x, y, int((col + 1) * self._cell_w) - x, int((row + 1) * self._cell_h) - y, bg)
 
                 if ch and ch != "":
                     if char.bold and char.italics:
