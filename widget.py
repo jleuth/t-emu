@@ -170,11 +170,11 @@ class TerminalWidget(QWidget):
 
                 if char.underscore:
                     p.setPen(fg)
-                    p.drawLine(x, y, + int(self._cell_h) - 2, x + int(self._cell_w, y + int(self._cell_h)) -2)
+                    p.drawLine(x, y + int(self._cell_h) - 2, x + int(self._cell_w), y + int(self._cell_h) - 2)  
 
                 if char.strikethrough:
                     p.setPen(fg)
-                    p.drawLine(x, y, + int(self._cell_h // 2), x + int(self._cell_w), y + int(self._cell_h // 2))
+                    p.drawLine(x, y + int(self._cell_h // 2), x + int(self._cell_w), y + int(self._cell_h // 2))
 
         if self._cursor_visible and not self._emu._screen.cursor.hidden:
             cx = int(cur_col * self._cell_w)
