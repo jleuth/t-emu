@@ -42,14 +42,19 @@ CTRL_ARROW_MAP = {
     Qt.Key.Key_Left:  b"\x1b[1;5D",  
 }
 
+ARROW_KEYS = {                                                                                                                                                           
+    Qt.Key.Key_Up:    (b"\x1b[A", b"\x1bOA"),                                                                                                                            
+    Qt.Key.Key_Down:  (b"\x1b[B", b"\x1bOB"),                                                                                                                            
+    Qt.Key.Key_Right: (b"\x1b[C", b"\x1bOC"),                                                                                                                            
+    Qt.Key.Key_Left:  (b"\x1b[D", b"\x1bOD"),                                                                                                                            
+}
+
 _PYTE_ANSI = [                                                                                                                                                           
     "#000000", "#cc0000", "#4e9a06", "#c4a000",                                                                                                                          
     "#3465a4", "#75507b", "#06989a", "#d3d7cf",                                                                                                                          
     "#555753", "#ef2929", "#8ae234", "#fce94f",                                                                                                                          
     "#729fcf", "#ad7fa8", "#34e2e2", "#eeeeec",                                                                                                                          
 ]
-
-signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 def _pyte_color(value):
     if value == "default" or value is None:
@@ -147,8 +152,7 @@ class TerminalWidget(QWidget):
                 bg = _pyte_color(char.bg)
 
                 if char.reverse:
-                    fg = fg or QColor('#b6f5f1')
-                    bg = bg or QColor(16, 16, 20)
+                    fg, bg = (bg or QColor(16, 16, 20)), (fg or QColor('#ffffff'))
 
                 if bg: p.fillRect(x, y, int(self._cell_w), int(self._cell_h), bg)
 
@@ -166,7 +170,7 @@ class TerminalWidget(QWidget):
 
                 if char.underscore:
                     p.setPen(fg)
-                    p.drawText(x, y, + int(self._cell_h) - 2, x + int(self._cell_w, y + int(self._cell_h)) -2)
+                    p.drawLine(x, y, + int(self._cell_h) - 2, x + int(self._cell_w, y + int(self._cell_h)) -2)
 
                 if char.strikethrough:
                     p.setPen(fg)
@@ -189,13 +193,6 @@ class TerminalWidget(QWidget):
         key = event.key()
         mods = event.modifiers()
         app_cursor = "DECCKM" in self._emu._screen.mode  
-
-        ARROW_KEYS = {                                                                                                                                                           
-            Qt.Key.Key_Up:    (b"\x1b[A", b"\x1bOA"),                                                                                                                            
-            Qt.Key.Key_Down:  (b"\x1b[B", b"\x1bOB"),                                                                                                                            
-            Qt.Key.Key_Right: (b"\x1b[C", b"\x1bOC"),                                                                                                                            
-            Qt.Key.Key_Left:  (b"\x1b[D", b"\x1bOD"),                                                                                                                            
-        }
 
         if mods & Qt.KeyboardModifier.ControlModifier and key == Qt.Key.Key_C:
             self._pty.write(b'\x03')
@@ -242,6 +239,7 @@ class TerminalWidget(QWidget):
 
 
 def main():
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
     app = QApplication(sys.argv)
     w = TerminalWidget()
     w.resize(800, 500)
