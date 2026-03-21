@@ -10,10 +10,6 @@ from emulator import TerminalEmulator
 from pty import PtyProcess                                                                                                                                              
                                                                                                                                                                         
 KEY_MAP = {                                                                                                                                                              
-    Qt.Key.Key_Up: b"\x1b[A",                                                                                                                                            
-    Qt.Key.Key_Down: b"\x1b[B",                                                                                                                                          
-    Qt.Key.Key_Right: b"\x1b[C",                                                                                                                                         
-    Qt.Key.Key_Left: b"\x1b[D",                                                                                                                                          
     Qt.Key.Key_Backspace: b"\x7f",                                                                                                                                       
     Qt.Key.Key_Tab: b"\t",                                                                                                                                               
     Qt.Key.Key_Return: b"\r",                                                                                                                                            
@@ -201,8 +197,7 @@ class TerminalWidget(QWidget):
             Qt.Key.Key_Left:  (b"\x1b[D", b"\x1bOD"),                                                                                                                            
         }
 
-        if mods & Qt.KeyboardModifier.ControlModifier and key == Qt.Key.Key_C: #in relation to raw mode stuff in pty.py'
-            print('got ctrl c')
+        if mods & Qt.KeyboardModifier.ControlModifier and key == Qt.Key.Key_C:
             self._pty.write(b'\x03')
             self._pty.send_signal_to_fg(signal.SIGINT)
             return
@@ -228,7 +223,8 @@ class TerminalWidget(QWidget):
         if mods & Qt.KeyboardModifier.AltModifier:
             text = event.text()
             if text:
-                self._pty.write(b"\x1b" +text.encode("utf-8"))
+                self._pty.write(b"\x1b" + text.encode("utf-8"))
+                return
 
         text = event.text()
         if text:

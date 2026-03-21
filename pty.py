@@ -46,9 +46,7 @@ class PtyProcess(QObject):
         try:
             pgrp = os.tcgetpgrp(self._master_fd)
             os.killpg(pgrp, sig)
-            print('sent signal to fg')
         except OSError:
-            print('got error pty.py')
             pass
 
     def _read(self):
