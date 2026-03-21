@@ -60,3 +60,9 @@ TypeError: Screen.report_device_status() got an unexpected keyword argument 'pri
 [1]    3336387 segmentation fault (core dumped)  python3 widget.py```
 
 guess I'll try to do that, because this is interesting. i'm calling this now, but my suspicion is that it has something to do with OpenCode being able to take mouse inputs and my program not handling it yet.
+
+alright i got it to stop crashing. of course it turned out to be something completely different, my font handling. but now it just looks like shit. i don't know if i'm going to try and fix this yet or if i'll fix it later, but just look at this:
+
+![Kilo CLI shows in monotone blue, and with random lines, when the real program is supposed to have a fully gray solid background and yellow text](journal_img/kilocolorissue.png)
+
+i think i'll be done for today. total time in hackatime; 1h 6m
