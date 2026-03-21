@@ -25,7 +25,7 @@ class PtyProcess(QObject):
         self._proc = subprocess.Popen(
             [shell, "-l"],
             stdin=slave_fd, stdout=slave_fd, stderr=slave_fd,
-            preexec_fn=os.setsid, #not exactly sure what this does but it makes ctrl+c work
+            preexec_fn=lambda: (os.setsid(), fcntl.ioctl(0, termios.TIOCSCTTY, 0)), #not exactly sure what this does but it makes ctrl+c work
             env=env, close_fds=True,
         )
         os.close(slave_fd)
@@ -41,6 +41,15 @@ class PtyProcess(QObject):
         fcntl.ioctl(self._master_fd, termios.TIOCSWINSZ, winsize)
         if self._proc:
             os.killpg(os.getpgid(self._proc.pid), signal.SIGWINCH)
+
+    def send_signal_to_fg(self, sig): #this is a fix for programs like htop that use raw mode and don't have specific support for ctrl-c
+        try:
+            pgrp = os.tcgetpgrp(self._master_fd)
+            os.killpg(pgrp, sig)
+            print('sent signal to fg')
+        except OSError:
+            print('got error pty.py')
+            pass
 
     def _read(self):
         try:

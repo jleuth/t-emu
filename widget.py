@@ -1,5 +1,6 @@
 import sys
-from PySide6.QtCore import Qt, QTimer
+import signal
+from PySide6.QtCore import Qt, QTimer, QEvent
 from PySide6.QtGui import QColor, QFont, QFontMetricsF, QPainter                                                                                                         
 from PySide6.QtWidgets import QApplication, QWidget  
 
@@ -51,6 +52,8 @@ _PYTE_ANSI = [
     "#555753", "#ef2929", "#8ae234", "#fce94f",                                                                                                                          
     "#729fcf", "#ad7fa8", "#34e2e2", "#eeeeec",                                                                                                                          
 ]
+
+signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 def _pyte_color(value):
     if value == "default" or value is None:
@@ -189,9 +192,28 @@ class TerminalWidget(QWidget):
     def keyPressEvent(self, event):
         key = event.key()
         mods = event.modifiers()
+        app_cursor = "DECCKM" in self._emu._screen.mode  
+
+        ARROW_KEYS = {                                                                                                                                                           
+            Qt.Key.Key_Up:    (b"\x1b[A", b"\x1bOA"),                                                                                                                            
+            Qt.Key.Key_Down:  (b"\x1b[B", b"\x1bOB"),                                                                                                                            
+            Qt.Key.Key_Right: (b"\x1b[C", b"\x1bOC"),                                                                                                                            
+            Qt.Key.Key_Left:  (b"\x1b[D", b"\x1bOD"),                                                                                                                            
+        }
+
+        if mods & Qt.KeyboardModifier.ControlModifier and key == Qt.Key.Key_C: #in relation to raw mode stuff in pty.py'
+            print('got ctrl c')
+            self._pty.write(b'\x03')
+            self._pty.send_signal_to_fg(signal.SIGINT)
+            return
 
         if mods & Qt.KeyboardModifier.ControlModifier and key in CTRL_ARROW_MAP:
             self._pty.write(CTRL_ARROW_MAP[key])
+            return
+
+        if key in ARROW_KEYS:
+            normal, app = ARROW_KEYS[key]
+            self._pty.write(app if app_cursor else normal)
             return
 
         if key in KEY_MAP:
