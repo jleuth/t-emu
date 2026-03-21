@@ -176,7 +176,7 @@ class TerminalWidget(QWidget):
                     p.setPen(fg)
                     p.drawLine(x, y, + int(self._cell_h // 2), x + int(self._cell_w), y + int(self._cell_h // 2))
 
-        if self._cursor_visible:
+        if self._cursor_visible and not self._emu._screen.cursor.hidden:
             cx = int(cur_col * self._cell_w)
             cy = int(cur_row * self._cell_h)
             p.fillRect(cx, cy, max(2, int(self._cell_w)), int(self._cell_h), QColor(97, 175, 239, 180))
