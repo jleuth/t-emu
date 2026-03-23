@@ -56,30 +56,21 @@ _PYTE_ANSI = [
     "#729fcf", "#ad7fa8", "#34e2e2", "#eeeeec",                                                                                                                          
 ]
 
-_PYTE_NAMED = {
-    "black":   0, "red":     1, "green":   2, "brown":   3,                                                                                                              
-    "blue":    4, "magenta": 5, "cyan":    6, "white":   7,
-}
+_PYTE_NAMED = { 
+    "black":          0, "red":            1, "green":        2, "brown":        3,
+    "blue":           4, "magenta":        5, "cyan":         6, "white":        7,                                                                                      
+    "brightblack":    8, "brightred":      9, "brightgreen": 10, "brightbrown": 11,
+    "brightblue":    12, "brightmagenta": 13, "brightcyan":  14, "brightwhite": 15,                                                                                      
+} 
 
 def _pyte_color(value):
     if value == "default" or value is None:
         return None
-    if isinstance(value, int):
-        if value < 16:
-            return QColor(_PYTE_ANSI[value])
-        if value < 232:
-            v = value - 16
-            b = v % 6
-            g = (v // 6) % 6
-            r = v // 36
-            lut = (0, 95, 135, 175, 215, 255)
-            return QColor(lut[r], lut[g], lut[b])
-
-        s = (value - 232) * 10 + 8
-        return QColor(s, s, s)
     if isinstance(value, str):
         if value in _PYTE_NAMED:
             return QColor(_PYTE_ANSI[_PYTE_NAMED[value]])
+        if len(value) == 6:
+            return QColor("#" + value)
         return QColor(value) if QColor(value).isValid() else None
     return None
 
