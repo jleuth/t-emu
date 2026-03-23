@@ -56,6 +56,11 @@ _PYTE_ANSI = [
     "#729fcf", "#ad7fa8", "#34e2e2", "#eeeeec",                                                                                                                          
 ]
 
+_PYTE_NAMED = {
+    "black":   0, "red":     1, "green":   2, "brown":   3,                                                                                                              
+    "blue":    4, "magenta": 5, "cyan":    6, "white":   7,
+}
+
 def _pyte_color(value):
     if value == "default" or value is None:
         return None
@@ -67,16 +72,19 @@ def _pyte_color(value):
             b = v % 6
             g = (v // 6) % 6
             r = v // 36
-            return QColor(r * 51, g * 51, b * 51)
+            lut = (0, 95, 135, 175, 215, 255)
+            return QColor(lut[r], lut[g], lut[b])
 
         s = (value - 232) * 10 + 8
         return QColor(s, s, s)
     if isinstance(value, str):
-        if value.startswith('#') or len(value) > 0:
-            return QColor(value) if QColor(value).isValid() else None
+        if value in _PYTE_NAMED:
+            return QColor(_PYTE_ANSI[_PYTE_NAMED[value]])
+        return QColor(value) if QColor(value).isValid() else None
     return None
 
 class TerminalWidget(QWidget):
+
     def __init__(self, conf=None, parent=None):
         super().__init__(parent)
         self._conf = conf or Conf()
@@ -148,7 +156,7 @@ class TerminalWidget(QWidget):
                 x = int(col * self._cell_w)
                 ch = char.data
 
-                fg = _pyte_color(char.fg) or QColor('#b6f5f1')
+                fg = _pyte_color(char.fg) or QColor('#d3d7cf')
                 bg = _pyte_color(char.bg)
 
                 if char.reverse:
