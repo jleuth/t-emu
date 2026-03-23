@@ -167,11 +167,11 @@ class TerminalWidget(QWidget):
                     p.setPen(fg)
                     p.drawText(x, y + int(self._baseline), ch)
 
-                if char.underscore:
+                if char.underscore and ch and ch.strip():
                     p.setPen(fg)
                     p.drawLine(x, y + int(self._cell_h) - 2, x + int(self._cell_w), y + int(self._cell_h) - 2)  
 
-                if char.strikethrough:
+                if char.strikethrough and ch and ch.strip():
                     p.setPen(fg)
                     p.drawLine(x, y + int(self._cell_h // 2), x + int(self._cell_w), y + int(self._cell_h // 2))
 
