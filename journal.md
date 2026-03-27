@@ -66,3 +66,12 @@ alright i got it to stop crashing. of course it turned out to be something compl
 ![Kilo CLI shows in monotone blue, and with random lines, when the real program is supposed to have a fully gray solid background and yellow text](journal_img/kilocolorissue.png)
 
 i think i'll be done for today. total time in hackatime; 1h 6m
+
+23 Mar: more bugs and getting it a bit prettier
+
+so i guess more complicated repls and interactive programs like OpenCode/Kilo CLI just have a hard time running and pyte's color stuff is confusing. i'm going to be honest, i had Claude figure out why the hell Kilo was looking the way it was. 
+
+now the colors are right, but there's still those handful of lines at the top as seen in the previous photo, what could that be?
+
+i guess at some point kilo sets the underline attribute during setup and pyte doesn't really like that. we just had to add a bit more restricting handling to not draw underlines in spaces that are empty but colored. so now it's all good.
+
