@@ -1,8 +1,8 @@
 import sys
 import signal
-from PySide6.QtCore import Qt, QTimer, QEvent
-from PySide6.QtGui import QColor, QFont, QFontMetricsF, QPainter                                                                                                         
-from PySide6.QtWidgets import QApplication, QWidget  
+from PySide6.QtCore import QEasingCurve, QPropertyAnimation, Qt, QTimer, QEvent
+from PySide6.QtGui import QColor, QFont, QFontMetricsF, QKeySequence, QPainter, QShortcut                                                                                                         
+from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout, QMainWindow, QWidget  
 
                                                                                                                                                                         
 from config import Conf                                                                                                                                                 
@@ -235,12 +235,49 @@ class TerminalWidget(QWidget):
         self._cursor_visible = True
         self.update()
 
+class MainWindow(QMainWindow):
+    _SIDEBAR_W = 250
 
+    def __init__(self):
+        super().__init__()
+        self._sidebar_open = False
+
+        central = QWidget()
+        self.setCentralWidget(central)
+        row = QHBoxLayout(central)
+        row.setContentsMargins(0, 0, 0, 0)
+        row.setSpacing(0)
+
+        self._sidebar = QFrame()
+        self._sidebar.setMaximumWidth(0)
+        self._sidebar.setStyleSheet("background: #3e4052; border-right: 1px solid #272933;")
+        row.addWidget(self._sidebar)
+
+        self._term = TerminalWidget()
+        row.addWidget(self._term, 1)
+
+        self._anim = QPropertyAnimation(self._sidebar, b"maximumWidth")
+        self._anim.setDuration(200)
+        self._anim.setEasingCurve(QEasingCurve.Type.OutCubic)
+        self._anim.valueChanged.connect(self._sidebar.setMinimumWidth)
+
+        shortcut = QShortcut(QKeySequence("Ctrl+E"), self)
+        shortcut.activated.connect(self._toggle_sidebar)
+
+    def _toggle_sidebar(self):
+        self._sidebar_open = not self._sidebar_open
+        self._anim.stop()
+        self._anim.setStartValue(self._sidebar.maximumWidth())
+        self._anim.setEndValue(self._SIDEBAR_W if self._sidebar_open else 0)
+        self._anim.start()
+
+    def start(self):
+        self._term.start()
 
 def main():
     signal.signal(signal.SIGINT, signal.SIG_IGN)
     app = QApplication(sys.argv)
-    w = TerminalWidget()
+    w = MainWindow()
     w.resize(800, 500)
     w.show()
     w.start()
