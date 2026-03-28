@@ -75,3 +75,6 @@ now the colors are right, but there's still those handful of lines at the top as
 
 i guess at some point kilo sets the underline attribute during setup and pyte doesn't really like that. we just had to add a bit more restricting handling to not draw underlines in spaces that are empty but colored. so now it's all good.
 
+27/28 Mar: getting back into it
+
+I took a break for finals week, but it's time to start working again. On the 27th I implemented a side out sidebar for settings config and then immediately went to go take a nap without committing it. Today, I wanna try and make it look a bit better, and add some rudimentary settings.
