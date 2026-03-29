@@ -77,4 +77,8 @@ i guess at some point kilo sets the underline attribute during setup and pyte do
 
 27/28 Mar: getting back into it
 
-I took a break for finals week, but it's time to start working again. On the 27th I implemented a side out sidebar for settings config and then immediately went to go take a nap without committing it. Today, I wanna try and make it look a bit better, and add some rudimentary settings.
+I took a break for finals week, but it's time to start working again. On the 27th I implemented a slide out sidebar for settings config and then immediately went to go take a nap without committing it. Today, I wanna try and make it look a bit better, and add some rudimentary settings.
+
+i added a slide out settings menu, and also a tab system for different menu sections. i really like the look of it, and i made sure it was responsive with programs, i'm really happy with how it turned out. eventually i might add a carousel look to the settings tabs, but that would probably be a pain in the ass in Qt and i wanna get more basic things working in the program right now.
+
+i'll be done for the night, as it's 11pm. total time in hackatime; 57m.
