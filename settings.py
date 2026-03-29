@@ -25,8 +25,8 @@ class SettingsPanel(QFrame):
         root.setSpacing(0)
 
         title = QLabel("Settings")
-        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title.setStyleSheet("color: #cdd6f4; font-size: 13px; font-weight: bold; padding: 14px 0 10px 0;")
+        title.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        title.setStyleSheet("color: #cdd6f4; font-size: 13px; font-weight: bold; padding: 14px 0 10px 12px;")
         root.addWidget(title)
 
         tab_bar = QWidget()
