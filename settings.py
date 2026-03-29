@@ -76,7 +76,7 @@ class SettingsPanel(QFrame):
         for i, btn in enumerate(self._tab_btns):
             btn.setChecked(i == idx)
         self._current = idx
-        w = set._viewport.width()
+        w = self._viewport.width()
         self._anim.stop()
         self._anim.setStartValue(self._slide.pos())
         self._anim.setEndValue(QPoint(-idx * w, 0))
