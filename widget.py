@@ -7,7 +7,8 @@ from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout, QMainWindow, QW
                                                                                                                                                                         
 from config import Conf                                                                                                                                                 
 from emulator import TerminalEmulator                                                                                                                                   
-from pty import PtyProcess                                                                                                                                              
+from pty import PtyProcess  
+from settings import SettingsPanel                                                                                                                                            
                                                                                                                                                                         
 KEY_MAP = {                                                                                                                                                              
     Qt.Key.Key_Backspace: b"\x7f",                                                                                                                                       
@@ -248,9 +249,8 @@ class MainWindow(QMainWindow):
         row.setContentsMargins(0, 0, 0, 0)
         row.setSpacing(0)
 
-        self._sidebar = QFrame()
+        self._sidebar = SettingsPanel()
         self._sidebar.setMaximumWidth(0)
-        self._sidebar.setStyleSheet("background: #3e4052; border-right: 1px solid #272933;")
         row.addWidget(self._sidebar)
 
         self._term = TerminalWidget()
