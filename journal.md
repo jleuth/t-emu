@@ -90,3 +90,7 @@ all this is kinda a bitch to do and i'm still debating on whether or not i am go
 ![A big sticky note that has a list of features I need to implement with boxes next to them to check off as I go](journal-img/featuretracker.jpg)
 
 as you can see i've finished implementing some color settings (not all of them, but this is okay for now), and it's time to start working on LLM stuff. I think I'll just do the modal, not even having it actually work yet.
+
+![An early version of the LLM prompt, that's really just floating text box that is slightly overlapping the current line](journal-img/startofllmmodal.png)
+
+here, i've started on the llm modal, and tomorrow i will start on prettying it up. it's overlapping the current line rn, and i forgot to make hitting ctrl+k again close it, and i need to make the colors configurable, but that's all for tomorrow. i'm going to bed. total time in hackatime today: 1h, 47m.
