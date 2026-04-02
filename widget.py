@@ -6,6 +6,7 @@ from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout, QMainWindow, QW
 
                                                                                                                                                                         
 from config import Conf                                                                                                                                                 
+import config
 from emulator import TerminalEmulator                                                                                                                                   
 from pty import PtyProcess  
 from settings import SettingsPanel                                                                                                                                            
@@ -135,7 +136,7 @@ class TerminalWidget(QWidget):
     def paintEvent(self, event):
         p = QPainter(self)
         p.setFont(self._font)
-        p.fillRect(self.rect(), QColor(16, 16, 20))
+        p.fillRect(self.rect(), QColor(self._conf.bg_color))
 
         screen = self._emu._screen
         cur_row, cur_col = self._emu._screen.cursor.y, self._emu._screen.cursor.x
@@ -148,11 +149,11 @@ class TerminalWidget(QWidget):
                 x = int(col * self._cell_w)
                 ch = char.data
 
-                fg = _pyte_color(char.fg) or QColor('#d3d7cf')
+                fg = _pyte_color(char.fg) or QColor(self._conf.fg_color)
                 bg = _pyte_color(char.bg)
 
                 if char.reverse:
-                    fg, bg = (bg or QColor(16, 16, 20)), (fg or QColor('#ffffff'))
+                    fg, bg = (bg or QColor(self._conf.bg_color)), (fg or QColor('#ffffff'))
 
                 if bg: p.fillRect(x, y, int((col + 1) * self._cell_w) - x, int((row + 1) * self._cell_h) - y, bg)
 
@@ -239,30 +240,32 @@ class TerminalWidget(QWidget):
 class MainWindow(QMainWindow):
     _SIDEBAR_W = 250
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, conf):                                                                                                                                                
+        super().__init__()                                                                                                                                                 
         self._sidebar_open = False
-
-        central = QWidget()
+        self._conf = conf                                                                                                                                                    
+    
+        central = QWidget()                                                                                                                                                  
         self.setCentralWidget(central)
         row = QHBoxLayout(central)
         row.setContentsMargins(0, 0, 0, 0)
-        row.setSpacing(0)
-
-        self._sidebar = SettingsPanel()
+        row.setSpacing(0)                                                                                                                                                    
+    
+        self._sidebar = SettingsPanel(conf, on_change=self._on_settings_change)                                                                                              
         self._sidebar.setMaximumWidth(0)
         row.addWidget(self._sidebar)
 
-        self._term = TerminalWidget()
+        self._term = TerminalWidget(conf)                                                                                                                                    
         row.addWidget(self._term, 1)
-
+                                                                                                                                                                            
         self._anim = QPropertyAnimation(self._sidebar, b"maximumWidth")
         self._anim.setDuration(200)
         self._anim.setEasingCurve(QEasingCurve.Type.OutCubic)
-        self._anim.valueChanged.connect(self._sidebar.setMinimumWidth)
-
-        shortcut = QShortcut(QKeySequence("Ctrl+E"), self)
+        self._anim.valueChanged.connect(self._sidebar.setMinimumWidth)                                                                                                       
+    
+        shortcut = QShortcut(QKeySequence("Ctrl+E"), self)                                                                                                                   
         shortcut.activated.connect(self._toggle_sidebar)
+
 
     def _toggle_sidebar(self):
         self._sidebar_open = not self._sidebar_open
@@ -270,6 +273,9 @@ class MainWindow(QMainWindow):
         self._anim.setStartValue(self._sidebar.maximumWidth())
         self._anim.setEndValue(self._SIDEBAR_W if self._sidebar_open else 0)
         self._anim.start()
+    
+    def _on_settings_change(self):
+        self._term.update()
 
     def start(self):
         self._term.start()
@@ -277,7 +283,8 @@ class MainWindow(QMainWindow):
 def main():
     signal.signal(signal.SIGINT, signal.SIG_IGN)
     app = QApplication(sys.argv)
-    w = MainWindow()
+    conf = Conf.load()
+    w = MainWindow(conf)
     w.resize(800, 500)
     w.show()
     w.start()
