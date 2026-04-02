@@ -82,3 +82,11 @@ I took a break for finals week, but it's time to start working again. On the 27t
 i added a slide out settings menu, and also a tab system for different menu sections. i really like the look of it, and i made sure it was responsive with programs, i'm really happy with how it turned out. eventually i might add a carousel look to the settings tabs, but that would probably be a pain in the ass in Qt and i wanna get more basic things working in the program right now.
 
 i'll be done for the night, as it's 11pm. total time in hackatime; 57m.
+
+1 Apr: tired but we still going
+
+all this is kinda a bitch to do and i'm still debating on whether or not i am gonna go to the event (i prob will but its still up in the air). today i'm trying to just keep going, we're introducing some settings and starting work on the LLM modal thingy. I have a little sheet of paper for tracking what i've done because I keep sitting down and thinking "okay what should I actually do"
+
+![A big sticky note that has a list of features I need to implement with boxes next to them to check off as I go](journal-img/featuretracker.jpg)
+
+as you can see i've finished implementing some color settings (not all of them, but this is okay for now), and it's time to start working on LLM stuff. I think I'll just do the modal, not even having it actually work yet.
