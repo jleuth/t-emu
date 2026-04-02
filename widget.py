@@ -1,8 +1,9 @@
 import sys
 import signal
+from turtle import isvisible
 from PySide6.QtCore import QEasingCurve, QPropertyAnimation, Qt, QTimer, QEvent
 from PySide6.QtGui import QColor, QFont, QFontMetricsF, QKeySequence, QPainter, QShortcut                                                                                                         
-from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout, QMainWindow, QWidget  
+from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout, QLineEdit, QMainWindow, QWidget  
 
                                                                                                                                                                         
 from config import Conf                                                                                                                                                 
@@ -111,6 +112,8 @@ class TerminalWidget(QWidget):
         self._cursor_timer.timeout.connect(self._blink)
         self._cursor_timer.start(530)
 
+        self._llm_modal = LlmModal(self)
+
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setMinimumSize(200, 100)
 
@@ -195,10 +198,23 @@ class TerminalWidget(QWidget):
         mods = event.modifiers()
         app_cursor = "DECCKM" in self._emu._screen.mode  
 
+        if key == Qt.Key.Key_Escape and self._llm_modal.isVisible():
+            self._llm_modal.dismiss()
+            return
+
         if mods & Qt.KeyboardModifier.ControlModifier and key == Qt.Key.Key_C:
             self._pty.write(b'\x03')
             self._pty.send_signal_to_fg(signal.SIGINT)
             return
+
+        if mods & Qt.KeyboardModifier.ControlModifier and key == Qt.Key.Key_K:
+            if self._llm_modal.isVisible():
+                self._llm_modal.dismiss()
+            else:
+                cx = int(self._emu._screen.cursor.x * self._cell_w)
+                cy = int(self._emu._screen.cursor.y * self._cell_h)
+                self._llm_modal.open(cx, cy, self.width())
+            return  
 
         if mods & Qt.KeyboardModifier.ControlModifier and key in CTRL_ARROW_MAP:
             self._pty.write(CTRL_ARROW_MAP[key])
@@ -236,6 +252,35 @@ class TerminalWidget(QWidget):
         self._emu.feed(data)
         self._cursor_visible = True
         self.update()
+
+class LlmModal(QFrame):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setStyleSheet("QFrame { background: #3e4052; border: 1px solid #272933; border-radius: 6px; }")
+        self.setFixedHeight(40)
+        self.hide()
+
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(6, 4, 6, 4)
+
+        self._input = QLineEdit()
+        self._input.setPlaceholderText("Get help with a command...")
+        self._input.setStyleSheet("QLineEdit { background: transparent; color: #cdd6f4; border: none; font-size: 13px; }")
+        layout.addWidget(self._input)
+
+    def open(self, cursor_x, cursor_y, parent_w):
+        w = min(250, parent_w - 20)
+        x = max(10, min(cursor_x, parent_w - w - 10))
+        y = max(10, cursor_y - self.height() - 4)
+        self.setGeometry(x, y, w, self.height())
+        self._input.clear()
+        self.show()
+        self._input.setFocus()
+
+    def dismiss(self):
+        self.hide()
+        if self.parent():
+            self.parent().setFocus()
 
 class MainWindow(QMainWindow):
     _SIDEBAR_W = 250
@@ -279,6 +324,7 @@ class MainWindow(QMainWindow):
 
     def start(self):
         self._term.start()
+        self._term.setFocus()
 
 def main():
     signal.signal(signal.SIGINT, signal.SIG_IGN)
