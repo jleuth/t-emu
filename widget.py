@@ -1,9 +1,8 @@
 import sys
 import signal
-from turtle import isvisible
-from PySide6.QtCore import QEasingCurve, QPropertyAnimation, Qt, QTimer, QEvent
-from PySide6.QtGui import QColor, QFont, QFontMetricsF, QKeySequence, QPainter, QShortcut                                                                                                         
-from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout, QLineEdit, QMainWindow, QWidget  
+from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QSize, Qt, QTimer, QEvent
+from PySide6.QtGui import QColor, QFont, QFontMetricsF, QKeySequence, QPainter, QShortcut, QIcon                                                                                  
+from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout, QLineEdit, QMainWindow, QWidget, QToolButton
 
                                                                                                                                                                         
 from config import Conf                                                                                                                                                 
@@ -259,10 +258,12 @@ class LlmModal(QFrame):
         super().__init__(parent)
         self.setStyleSheet("QFrame { background: #3e4052; border: 1px solid #272933; border-radius: 6px; }")
         self.setFixedHeight(40)
+        self.setFixedWidth(300)
         self.hide()
 
         layout = QHBoxLayout(self)
         layout.setContentsMargins(6, 4, 6, 4)
+        layout.setSpacing(4)
 
         self._input = QLineEdit()
         self._input.setPlaceholderText("Get help with a command...")
@@ -270,12 +271,21 @@ class LlmModal(QFrame):
         self._input.returnPressed.connect(self.send)
         layout.addWidget(self._input)
 
+        send_btn = QToolButton()
+        send_btn.setIcon(QIcon("icons/llm_modal_send_black.svg"))
+        send_btn.setFixedSize(24, 24)
+        send_btn.setIconSize(QSize(12, 12))
+        send_btn.setStyleSheet(" QToolButton { background: #ffffff; border: none; border-radius: 12px; } QToolButton:hover { background: #dcdedc; }")
+        layout.addWidget(send_btn)
+
+        
+
         self._llm = Llm()
 
     def open(self, cursor_x, cursor_y, parent_w):
         w = min(250, parent_w - 20)
         x = max(10, min(cursor_x, parent_w - w - 10))
-        y = max(10, cursor_y - self.height() - 4)
+        y = cursor_y = int(self.parent()._cell_h + 4)
         self.setGeometry(x, y, w, self.height())
         self._input.clear()
         self.show()
