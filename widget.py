@@ -10,7 +10,8 @@ from config import Conf
 import config
 from emulator import TerminalEmulator                                                                                                                                   
 from pty import PtyProcess  
-from settings import SettingsPanel                                                                                                                                            
+from settings import SettingsPanel   
+from llm import Llm                                                                                                                                         
                                                                                                                                                                         
 KEY_MAP = {                                                                                                                                                              
     Qt.Key.Key_Backspace: b"\x7f",                                                                                                                                       
@@ -266,7 +267,10 @@ class LlmModal(QFrame):
         self._input = QLineEdit()
         self._input.setPlaceholderText("Get help with a command...")
         self._input.setStyleSheet("QLineEdit { background: transparent; color: #cdd6f4; border: none; font-size: 13px; }")
+        self._input.returnPressed.connect(self.send)
         layout.addWidget(self._input)
+
+        self._llm = Llm()
 
     def open(self, cursor_x, cursor_y, parent_w):
         w = min(250, parent_w - 20)
@@ -281,6 +285,14 @@ class LlmModal(QFrame):
         self.hide()
         if self.parent():
             self.parent().setFocus()
+
+    def send(self):
+        text = self._input.text().strip()
+        if not text:
+            return
+        response = self._llm.request_response(text)
+        self.dismiss()
+
 
 class MainWindow(QMainWindow):
     _SIDEBAR_W = 250

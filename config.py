@@ -21,6 +21,8 @@ class Conf:
         c.shell = s.value("shell", c.shell)
         c.bg_color = s.value("bg_color", c.bg_color)
         c.fg_color = s.value("fg_color", c.fg_color)
+        c.current_model = s.value("current_model", c.current_model)
+        c.current_instructions_path = s.value("current_instructions_path", c.current_instructions_path)
 
         return c
 
@@ -31,3 +33,5 @@ class Conf:
         s.setValue("shell", self.shell)
         s.setValue("bg_color", self.bg_color)
         s.setValue("fg_color", self.fg_color)
+        s.setValue("current_model", self.current_model)
+        s.setValue("current_instructions_path", self.current_instructions_path)
